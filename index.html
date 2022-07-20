@@ -1,0 +1,185 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Game</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <style>
+        .visible{
+
+        }
+
+        h2{
+            height: 80px;
+            width: 440px;
+            display: none;
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid red;
+            color: rgb(31, 187, 31);
+            background-color: seashell
+        }
+
+        .btn{
+            width: 125px;
+            height: 85px;
+            font-size: 20px;
+            font-weight: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div id="start-div" class="container mt-5 p-2 border border-danger bg-secondary text-white d-flex justify-content-center" style="width: 440px;">
+        <label for="psize" class="me-1 p-1">Puzzle Size:</label>
+        <select id="psize" name="psize" style="width: 80px;">
+            <option value="0" disabled selected>Select</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+        </select>
+        <input id="submit" class="ms-1" type="submit" value="Submit">
+        <input id="reset" class="ms-1" type="reset" value="Reset">
+    </div>
+
+    <div id="container" class="container mt-2 border border-danger bg-light bg-gradient" style="height: 460px; width: 440px;">
+
+    </div>
+
+    <center><h2>Congratulation! You win.</h2></center>
+    
+</body>
+
+<script src="js/bootstrap.js"></script>
+<script>
+    $(document).ready(function () {
+        var first_value = 0;
+        var second_value = 0;
+        var game_over = 0;
+        var btn_num = -1;
+
+       //.....dynamic button generate.....
+       $(document).on("click", "#submit", function () {
+           btn_num = $("#psize").val();
+
+           //.......refresh previous div content.......
+           game_over = 0;
+           $("button").remove();
+           $("h2").css("display", "none");
+           
+           //.....generate random number.....
+           var max_pair_num = btn_num/2;
+           var min_pair_num = 1;
+           var i=1;
+
+           var array_1 = [];
+           var array_2 = [];
+
+           while (i <= max_pair_num) {
+               array_1.push(i);
+               array_2.push(i);
+               i++;
+           }
+           array_2.reverse();
+           console.log(array_1);
+           console.log(array_2);
+           //....merge two array....
+           array_1 = $.merge( $.merge( [], array_1 ), array_2 );
+           console.log(array_1);
+
+           //....randomly select index....
+           var max = array_1.length;
+           var min = 1;
+           var numberPick = [];
+
+           while (numberPick.length < array_1.length) {
+               var ran_val = Math.floor(Math.random() * (max - min + 1)) + min;
+               console.log("Random Value: "+ ran_val);
+               if (numberPick.includes(ran_val) == false) {
+                   numberPick.push(ran_val);
+               }
+           }
+
+           console.log(numberPick);
+
+           var i=0;  
+           while (i < btn_num) {
+                var index = numberPick[i]-1;
+                console.log(index);
+                $('<button type="button" class="btn btn-primary border border-warning border-5 float-start ms-5 me-4 mt-4"'+ 'value='+ array_1[index]+ '>Press</button>').appendTo('#container');
+            i++;
+           }
+       }); 
+
+       //......match puzzel.........
+       $(document).on("click", "button", function () {
+          $(this).addClass('visible');
+          
+          if ($(".visible").length == 1) {
+              first_value = $(this).select().val();
+
+              //.....select image
+              if (first_value == 1) {
+                   $(this).html('<img src="img/apple.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (first_value == 2) {
+                  $(this).html('<img src="img/mango.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (first_value == 3) {
+                  $(this).html('<img src="img/banana.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (first_value == 4) {
+                  $(this).html('<img src="img/orange.png" alt="" style="width: 100%; height: 100%;">');
+              }
+             
+          }
+
+          if ($(".visible").length == 2) {
+              second_value = $(this).select().val();
+              
+              //.....select image......
+              if (second_value == 1) {
+                   $(this).html('<img src="img/apple.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (second_value == 2) {
+                  $(this).html('<img src="img/mango.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (second_value == 3) {
+                  $(this).html('<img src="img/banana.png" alt="" style="width: 100%; height: 100%;">');
+              }
+              if (second_value == 4) {
+                  $(this).html('<img src="img/orange.png" alt="" style="width: 100%; height: 100%;">');
+              }
+
+              //.....matching pair......
+              if (first_value == second_value) {
+                  console.log("First: "+ first_value +" Second: "+ second_value);
+                  $(".visible").removeClass("visible");
+                  game_over = game_over + 2;
+              } else{
+                  setTimeout(function () {
+                      $(".visible").text("Press");
+                      $(".visible").removeClass("visible"); 
+                  },500);
+              }
+          }
+
+          //....display success message....
+          if (btn_num == game_over) {
+                $("h2").css("display", "block");
+            }
+       });
+
+       
+
+       $(document).on("click", "#reset", function () {
+           $("#psize").val(0);
+           location.reload(); 
+       });
+
+    });
+</script>
+</html>
